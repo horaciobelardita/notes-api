@@ -19,3 +19,7 @@ npm i
 ```sh
 npm run dev
 ```
+
+# Deploy en Heroku
+
+[url api](https://glacial-shore-84970.herokuapp.com/)
