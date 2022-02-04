@@ -1,7 +1,11 @@
 const mongoose = require('mongoose')
+const { MONGODB_URI, MONGODB_URI_TEST } = require('./utils/config')
+
+const connectionString =
+  process.env.NODE_ENV === 'test' ? MONGODB_URI_TEST : MONGODB_URI
 
 mongoose
-  .connect(process.env.MONGO_DB_URI)
+  .connect(connectionString)
   .then(() => {
     console.log('database connected')
   })
