@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --silent --runInBand",
+    "test:watch": "npm run test -- --watch",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "deploy": "git push heroku main"
   },
   "private": true,
@@ -14,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "cors": "2.8.5",
+    "cross-env": "7.0.3",
     "dotenv": "16.0.0",
     "express": "4.17.2",
     "mongoose": "6.1.8"
@@ -26,6 +29,11 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-promise": "^5.2.0",
-    "nodemon": "2.0.15"
+    "jest": "27.4.7",
+    "nodemon": "2.0.15",
+    "supertest": "6.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
