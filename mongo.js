@@ -6,3 +6,7 @@ mongoose
     console.log('database connected')
   })
   .catch(console.error)
+
+process.on('uncaughtException', () => {
+  mongoose.connection.close()
+})
