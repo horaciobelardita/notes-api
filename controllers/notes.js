@@ -1,18 +1,21 @@
 const { Router } = require('express')
 const Note = require('../models/note')
+const User = require('../models/user')
 
 const notesRouter = Router()
 
 notesRouter
   .route('/')
   .get((req, res) => {
-    Note.find().then((notes) => {
-      res.json(notes)
-    })
+    Note.find()
+      .populate('user', { name: 1, username: 1 })
+      .then((notes) => {
+        res.json(notes)
+      })
   })
 
-  .post((req, res) => {
-    const validFields = ['content']
+  .post(async (req, res, next) => {
+    const validFields = ['content', 'userId']
     const keys = Object.keys(req.body)
     const isValid = validFields.every((field) => keys.includes(field))
     if (!isValid) {
@@ -20,14 +23,25 @@ notesRouter
         error: `missing required fields (${validFields.join(',')})`
       })
     }
-    const note = new Note({
-      content: req.body.content,
-      important: req.body.important || false,
-      date: new Date()
-    })
-    note.save().then((savedNote) => {
-      res.status(201).json(savedNote)
-    })
+
+    try {
+      const user = await User.findById(req.body.userId)
+      // if (!user) {
+      //   throw new Error('User not found')
+      // }
+      const note = new Note({
+        content: req.body.content,
+        important: req.body.important || false,
+        date: new Date(),
+        user: user._id
+      })
+      const savedNote = await note.save()
+      user.notes = [...user.notes, savedNote._id]
+      await user.save()
+      return res.status(201).json(savedNote)
+    } catch (error) {
+      next(error)
+    }
   })
 
 notesRouter
